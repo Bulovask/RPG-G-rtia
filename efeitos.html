@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Efeitos</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <main>
+    <h1>Efeitos</h1>
+    <section id="lista-efeitos">
+
+    </section>
+
+    <form id="formulario" class="retrair-form">
+      <h2>Criar Efeito</h2>
+
+      <div>
+        <label for="nome">Nome</label>
+        <input id="nome" name="nome" type="text">
+      </div>
+
+      <div>
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" name="descricao"></textarea>
+      </div>
+
+      <section id="modificadores"></section>
+
+      <div>
+        <button type="button" id="addModificadorBtn">Adicionar Modificador</button>
+        <button type="button" id="salvarBtn">Salvar Efeito</button>
+        <button type="reset" id="limparBtn">Limpar</button>
+      </div>
+
+    </form>
+  </main>
+  <script>
+    const modificadores = document.getElementById('modificadores');
+    const formulario = document.getElementById('formulario');
+    const addModificadorBtn = document.getElementById('addModificadorBtn');
+    const limparBtn = document.getElementById('limparBtn');
+    const salvarBtn = document.getElementById('salvarBtn');
+
+    addModificadorBtn.onclick = () => {
+      const id = (Math.random() * 3600)
+        .toFixed(5)
+        .toString()
+        .replace('.', '')
+        .substring(0, 5);
+      const modificador = document.createElement('div');
+      modificador.classList.add('modificador');
+      modificador.innerHTML = `<h3 style="">Modificador</h3>
+      <button id="closeModificadorBtn${id}" type="button" class="close-min">&times;</button>
+      <div>
+        <label for="valor${id}">Valor</label>
+        <input id="valor${id}" name="valor[${id}]" type="number" min="1" value="1">
+      </div>
+      <div>
+        <label for="modo${id}">Modo</label>
+        <select name="modo[${id}]" id="modo${id}">
+          <option value="buff-add">Buff - Somar</option>
+          <option value="buff-mul">Buff - Multiplicar</option>
+          <option value="debuff-sub">Debuff - Subtrair</option>
+          <option value="debuff-div">Debuff - Dividir</option>
+        </select>
+      </div>
+      <div>
+        <label for="atributo-alvo${id}">Atributo Alvo</label>
+        <select name="atributo-alvo[${id}]" id="atributo-alvo${id}">
+          <optgroup label="Personagem">
+            <option value="forca">Força</option>
+            <option value="constituicao">Constituição</option>
+            <option value="agilidade">Agilidade</option>
+            <option value="inteligencia">Inteligência</option>
+            <option value="energia">Energia</option>
+          </optgroup>
+          <optgroup label="Equipamento">
+            <option value="resistencia">Resistência</option>
+            <option value="peso">Peso</option>
+            <option value="mobilidade">Mobilidade</option>
+          </optgroup>
+          <optgroup label="arma">
+            <option value="dano">Dano</option>
+            <option value="defesa">Defesa</option>
+          </optgroup>
+          <optgroup label="Equipamento, Arma e Item">
+            <option value="durabilidade">Durabilidade</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <span class="flex">
+          <input type="checkbox" name="permanente[${id}]" id="permanente${id}">
+          <label for="permanente${id}">Permanente;</label>
+        </span>
+        <span class="flex">
+          <label for="duracao${id}">Duração em turno(s)</label>
+          <input id="duracao${id}" name="duracao[${id}]" type="number" min="1" max="999" value="1" style="width: 3ch; padding: 0 3px">
+        </span>
+        <span class="flex">
+          <input id="aplicar-a-cada-turno${id}" name="aplicar-a-cada-turno[${id}]" type="checkbox">
+          <label for="aplicar-a-cada-turno${id}">Aplicar a cada turno</label>
+        </span>
+      </div>`;
+      modificador.querySelector(`#closeModificadorBtn${id}`).onclick = () => {
+        modificador.remove();
+      };
+
+      modificadores.append(modificador);
+    }
+
+    limparBtn.onclick = () => {
+      modificadores.innerHTML = '';
+    }
+
+    salvarBtn.onclick = () => {
+      const formData = new FormData(formulario);
+      // const dadosObjeto = Object.fromEntries(formData.entries());
+      const efeitoObj = {
+        modificadores: {}
+      }
+      formData.forEach((valor, chave) => {
+        const chaveAtual = chave.match(/([\w\d]+)\[([\d]+)\]/);
+        if (chaveAtual) {
+          if (!efeitoObj.modificadores[chaveAtual[2]]) efeitoObj.modificadores[chaveAtual[2]] = {};
+          efeitoObj.modificadores[chaveAtual[2]][chaveAtual[1]] = valor;
+        } else {
+          efeitoObj[chave] = valor;
+        }
+      });
+
+      efeitoObj.modificadores = Object.values(efeitoObj.modificadores);
+      const efeitoJson = JSON.stringify(efeitoObj);
+
+      console.log(efeitoObj);
+      downloadJSON(efeitoJson, 'efeito.json');
+
+    }
+
+    formulario.querySelector('h2').onclick = () => {
+      formulario.classList.toggle('retrair-form');
+    }
+
+
+    function downloadJSON(content, filename) {
+      // Cria um blob do conteúdo JSON
+      const blob = new Blob([content], {
+        type: 'application/json'
+      });
+
+      // Cria um link temporário para download
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+
+      // Adiciona o link ao DOM, aciona o download e o remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+
+</html>

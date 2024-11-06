@@ -1,0 +1,141 @@
+body {
+  padding: 5px;
+  margin: 0;
+  background-color: #321;
+  color: #fdc;
+  font-family: Calibri;
+  font-size: 17px;
+}
+
+body, main, section, div, span {
+  box-sizing: border-box;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  margin-bottom: 3px;
+  text-align: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+section {
+  padding: 5px;
+  box-shadow: 1px 1px 3px #0008;
+  border-radius: 8px;
+  background-color: #432;
+  display: flex;
+  overflow: scroll;
+  gap: 3px;
+}
+
+form {
+  display: flex;
+  justify-content: first baseline;
+  flex-direction: column;
+  background-color: #432;
+  padding: 5px;
+  border-radius: 7px;
+  box-shadow: 2px 2px 8px #0008;
+  gap: 3px;
+}
+
+form div {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-shadow: inset 1px 1px 3px #0008;
+  padding: 5px;
+  border-radius: 8px;
+  flex-grow: 1;
+}
+
+input, select, textarea, button {
+  background-color: #473625;
+  border-radius: 7px;
+  border: 1px solid #543;
+  color: #fdc;
+  font-family: Calibri;
+  font-size: 17px;
+  flex-grow: 1;
+  padding: 5px;
+  margin: 0;
+}
+
+:is(input, textarea, button, select):disabled,
+:is(input, textarea, button, select):disabled + label,
+label:has(+ :is(input, textarea, button, select):disabled) {
+  filter: saturate(0) opacity(50%);
+
+} 
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background-color: #876;
+  color: #321;
+  font-weight: bold;
+  padding: 7px;
+}
+
+button:active {
+  filter: brightness(70%);
+}
+
+.modificador {
+  min-width: 100%;
+}
+
+.modificador, .modificador :is(input, select) {
+  font-size: 16px;
+}
+
+.close-min {
+  padding: 0 !important;
+  max-width: 3ch;
+  max-height: 3ch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e55;
+}
+
+.retrair-form :not(:first-child){
+  display: none;
+}
+
+#formulario:not(.retrair-form) {
+  position: fixed;
+  width: calc(100vw - 20px);
+  max-height: 95vh;
+  overflow-y: auto;
+  bottom: 5px;
+  left: 5px;
+}
+
+#modificadores {
+  overflow-y: visible;
+  min-height: max-content;
+  counter-reset: item;
+}
+
+.modificador {
+  counter-increment: item;
+}
+
+.modificador h3::after {
+  content: " " counter(item);
+}
